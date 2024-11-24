@@ -32,9 +32,52 @@ async function signIn(req: Request, res: Response) {
     expiresIn: "1h",
   })
 
-  res.json({ token })
+  res.cookie("pizzashop_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 3600000,
+    path: "/",
+  })
+
+  res.json({ message: "Login realizado com sucesso" })
+}
+
+async function me(req: Request, res: Response) {
+  try {
+    const token = req.cookies["pizzashop_token"]
+
+    if (!token) {
+      res.status(401).send({ message: "Não autorizado" })
+      return
+    }
+
+    const verified = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: number
+    }
+
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, verified.id),
+      columns: {
+        email: true,
+        nome: true,
+        id: true,
+      },
+    })
+
+    if (!user) {
+      res.status(401).send({ message: "Usuário não encontrado" })
+    }
+
+    res.json({ me: user })
+  } catch (error) {
+    console.log(error)
+    res.status(401).send({ message: "Não autorizado" })
+  }
+
+  return
 }
 
 export default {
   signIn,
+  me,
 }
