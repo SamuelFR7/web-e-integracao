@@ -8,6 +8,8 @@ import { AppLayout } from "./layouts/app-layout"
 import { SignInPage } from "./pages/sign-in"
 import { api } from "./lib/api"
 import { DashboardLayout } from "./layouts/dashboard-layout"
+import { ModalLayout } from "./layouts/modal-layout"
+import { CadastroCliente } from "./pages/cadastro-cliente"
 
 const router = createBrowserRouter([
   {
@@ -43,6 +45,15 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <IndexPage />,
+          },
+          {
+            element: <ModalLayout />,
+            children: [
+              {
+                path: "/cadastro/clientes",
+                element: <CadastroCliente />,
+              },
+            ],
           },
         ],
       },

@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 const signInSchema = z.object({
-  email: z.string().email(),
+  email: z.string().toLowerCase().email(),
   senha: z.string(),
 })
 

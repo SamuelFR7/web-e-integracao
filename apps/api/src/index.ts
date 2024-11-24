@@ -3,6 +3,7 @@ import express from "express"
 import cors from "cors"
 import authRouter from "./modules/auth/routes"
 import cookieParser from "cookie-parser"
+import clientesRouter from "./modules/clientes/routes"
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use(
 )
 
 app.use(authRouter)
+app.use(clientesRouter)
 
 const PORT = process.env.PORT || 3000
 

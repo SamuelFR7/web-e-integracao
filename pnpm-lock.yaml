@@ -20,6 +20,9 @@ importers:
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
+      br-docs-validator:
+        specifier: ^0.2.0
+        version: 0.2.0
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -99,6 +102,9 @@ importers:
       axios:
         specifier: ^1.7.7
         version: 1.7.7
+      br-docs-validator:
+        specifier: ^0.2.0
+        version: 0.2.0
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -1686,6 +1692,9 @@ packages:
   body-parser@1.20.3:
     resolution: {integrity: sha512-7rAxByjUMqQ3/bHJy7D6OGXvx/MMc4IqBn/X0fcM1QUcAItpZrBEYhWGem+tzXH90c+G01ypMcYJBO9Y30203g==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
+
+  br-docs-validator@0.2.0:
+    resolution: {integrity: sha512-IDHQQFHfkhFuhoNypMX3G1mPWANXqYlEcRUmVY+us286JGKhK1K2/+k7aD5kbH/BjwioQ1a4Eb+tKojHWcDAKw==}
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -4406,6 +4415,8 @@ snapshots:
       unpipe: 1.0.0
     transitivePeerDependencies:
       - supports-color
+
+  br-docs-validator@0.2.0: {}
 
   brace-expansion@1.1.11:
     dependencies:
