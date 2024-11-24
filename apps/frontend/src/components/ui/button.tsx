@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gray border border-red-border",
+        default: "bg-gray border border-red-border hover:bg-gray/90",
         fail: "bg-red text-red-border border border-red-border bg-opacity-50 hover:bg-red/90",
         success:
           "bg-green text-green-border border border-green-border bg-opacity-50 hover:bg-green/90",

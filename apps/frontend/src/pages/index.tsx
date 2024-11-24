@@ -1,10 +1,9 @@
-import { Button } from "~/components/ui/button"
+import { Header } from "~/components/header"
 
 export function IndexPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold">Hello World</h1>
-      <Button>Okay</Button>
+      <Header />
     </div>
   )
 }
