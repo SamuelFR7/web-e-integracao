@@ -1,10 +1,11 @@
-import { Link, useLoaderData } from "react-router"
+import { Link, useLoaderData, useNavigate } from "react-router"
 import { Button } from "~/components/ui/button"
 import { ListarPedidosResponse } from "./listar-pedidos"
 import { formatDate, formatTime, formatValue } from "~/lib/utils"
 import { DetalhePedido } from "~/components/pedido-status"
 
 export function RelatorioDePedidos() {
+  const navigate = useNavigate()
   const data = useLoaderData<ListarPedidosResponse>()
 
   return (
@@ -35,7 +36,7 @@ export function RelatorioDePedidos() {
         </div>
         <div className="flex flex-col gap-4">
           <Button>Imprimir</Button>
-          <Button variant="success">Exportar</Button>
+          <Button variant="success" onClick={() => window.open('http://localhost:3000/relatorio/pedidos')}>Exportar</Button>
         </div>
       </div>
     </div>
