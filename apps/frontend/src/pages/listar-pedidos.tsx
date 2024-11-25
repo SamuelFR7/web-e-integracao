@@ -4,7 +4,7 @@ import { Link } from "react-router"
 import { DetalhePedido } from "~/components/pedido-status"
 import { api } from "~/lib/api"
 
-type ListarPedidosResponse = {
+export type ListarPedidosResponse = {
   pedidos: {
     id: number
     status:
@@ -18,6 +18,7 @@ type ListarPedidosResponse = {
       nome: string
     }
     craetedAt: Date
+    valorTotal: number
   }[]
 }
 

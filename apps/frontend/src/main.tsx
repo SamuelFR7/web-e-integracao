@@ -18,8 +18,9 @@ import { CadastroCliente } from "./pages/cadastro-cliente"
 import { CadastroCategoria } from "./pages/cadastro-categoria"
 import { CadastroProduto } from "./pages/cadastro-produto"
 import { CadastroCupom } from "./pages/cadastro-cupom"
-import { ListarPedidos } from "./pages/listar-pedidos"
+import { ListarPedidos, ListarPedidosResponse } from "./pages/listar-pedidos"
 import { DetalhesDoPedido } from "./pages/detalhes-do-pedido"
+import { RelatorioDePedidos } from "./pages/relatorio-de-pedidos"
 
 export type GetPedidoResponse = {
   pedido: {
@@ -46,7 +47,7 @@ export type GetPedidoResponse = {
     }
     produtosPedidos: {
       id: string
-        produto: {
+      produto: {
         nome: string
         preco: number
       }
@@ -122,7 +123,7 @@ const router = createBrowserRouter([
               {
                 path: "/movimento/pedidos/:id",
                 element: <DetalhesDoPedido />,
-                loader: async ({ params }: LoaderFunctionArgs) => {
+                loader: async ({ params }) => {
                   const id = params.id
 
                   if (!id) {
@@ -133,7 +134,17 @@ const router = createBrowserRouter([
                     `/pedidos/${id}`
                   )
 
-                  return data                },
+                  return data
+                },
+              },
+              {
+                path: "/relatorio",
+                element: <RelatorioDePedidos />,
+                loader: async () => {
+                  const { data }= await api.get<ListarPedidosResponse>("/pedidos")
+
+                  return data
+                },
               },
             ],
           },

@@ -1,22 +1,31 @@
+import { eq, sum } from "drizzle-orm"
 import type { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "~/db/db"
+import {
+  clientes,
+  pedidos as pedidosRaw,
+  produtos,
+  produtosPedidos,
+} from "~/db/schema"
 
 async function listarPedidos(_: Request, res: Response) {
-  const pedidos = await db.query.pedidos.findMany({
-    with: {
+  const pedidos = await db
+    .select({
+      id: pedidosRaw.id,
+      status: pedidosRaw.status,
+      createdAt: pedidosRaw.createdAt,
       cliente: {
-        columns: {
-          nome: true,
-        },
+        nome: clientes.nome,
       },
-    },
-    columns: {
-      id: true,
-      status: true,
-      createdAt: true
-    },
-  })
+      valorTotal: sum(produtos.preco),
+    })
+    .from(pedidosRaw)
+    .leftJoin(clientes, eq(pedidosRaw.clienteId, clientes.id))
+    .leftJoin(produtosPedidos, eq(pedidosRaw.id, produtosPedidos.pedidoId))
+    .leftJoin(produtos, eq(produtosPedidos.produtoId, produtos.id))
+    .groupBy(pedidosRaw.id,pedidosRaw.status, pedidosRaw.createdAt,clientes.nome)
+  
 
   res.status(200).json({ pedidos })
   return
@@ -31,8 +40,8 @@ async function detalharPedido(req: Request, res: Response) {
       cliente: {
         columns: {
           nome: true,
-          cpf: true
-        }
+          cpf: true,
+        },
       },
       produtosPedidos: {
         with: {
@@ -40,11 +49,11 @@ async function detalharPedido(req: Request, res: Response) {
             columns: {
               nome: true,
               preco: true,
-            }
-          }
-        }
-      }
-    }
+            },
+          },
+        },
+      },
+    },
   })
 
   if (!pedido) {
