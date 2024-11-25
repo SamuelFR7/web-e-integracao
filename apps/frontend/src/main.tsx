@@ -12,6 +12,7 @@ import { ModalLayout } from "./layouts/modal-layout"
 import { CadastroCliente } from "./pages/cadastro-cliente"
 import { CadastroCategoria } from "./pages/cadastro-categoria"
 import { CadastroProduto } from "./pages/cadastro-produto"
+import { CadastroCupom } from "./pages/cadastro-cupom"
 
 const router = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
                   return data
                 },
               },
+              {
+                path: '/cadastro/cupons',
+                element: <CadastroCupom />
+              }
             ],
           },
         ],

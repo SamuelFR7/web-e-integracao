@@ -32,7 +32,7 @@ export function Header() {
                 </DropdownMenu.Item>
                 <DropdownMenu.Item asChild>
                   <Link
-                    to="/cadastro/cupom"
+                    to="/cadastro/cupons"
                     className={cn(buttonVariants(), "w-[200px]")}
                   >
                     CUPOM

@@ -54,3 +54,9 @@ export const categorias = pgTable("categorias", {
 export const categoriasRelations = relations(categorias, ({ many }) => ({
   produtos: many(produtos),
 }))
+
+export const cupons = pgTable('cupons', {
+  id: serial("id").notNull().primaryKey(),
+  codigo: varchar("codigo", { length: 10 }).notNull(),
+  valor: integer('valor').notNull()
+})

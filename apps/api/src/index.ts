@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser"
 import clientesRouter from "./modules/clientes/routes"
 import categoriasRouter from "./modules/categorias/routes"
 import produtosRouter from "./modules/produtos/routes"
+import cuponsRouter from "./modules/cupons/routes"
 
 const app = express()
 
@@ -24,6 +25,7 @@ app.use(authRouter)
 app.use(clientesRouter)
 app.use(categoriasRouter)
 app.use(produtosRouter)
+app.use(cuponsRouter)
 
 const PORT = process.env.PORT || 3000
 
