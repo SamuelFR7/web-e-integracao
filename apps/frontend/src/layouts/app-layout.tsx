@@ -9,6 +9,14 @@ export function AppLayout() {
         <div className="flex-1 bg-[#FE1A2C]"></div>
       </div>
 
+       <div className="absolute inset-0 flex items-center justify-center z-0">
+        <img
+          src="/logo-no-opacity.png"
+          alt="Background"
+          className="w-[200px] h-[200px] object-contain"
+        />
+      </div>
+
       <div className="relative z-10">
         <Outlet />
       </div>
