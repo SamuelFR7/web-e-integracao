@@ -13,6 +13,7 @@ import { CadastroCliente } from "./pages/cadastro-cliente"
 import { CadastroCategoria } from "./pages/cadastro-categoria"
 import { CadastroProduto } from "./pages/cadastro-produto"
 import { CadastroCupom } from "./pages/cadastro-cupom"
+import { ListarPedidos } from "./pages/listar-pedidos"
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
               {
                 path: '/cadastro/cupons',
                 element: <CadastroCupom />
+              },
+              {
+                path: '/movimento/pedidos',
+                element: <ListarPedidos />
               }
             ],
           },

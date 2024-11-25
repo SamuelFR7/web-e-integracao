@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm"
-import { integer, pgEnum, pgTable, serial, varchar } from "drizzle-orm/pg-core"
+import { integer, text, pgEnum, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
   id: serial("id").notNull().primaryKey(),
@@ -60,3 +60,55 @@ export const cupons = pgTable('cupons', {
   codigo: varchar("codigo", { length: 10 }).notNull(),
   valor: integer('valor').notNull()
 })
+
+export const statusPedidos = pgEnum('status_pedidos', ['Pendente', 'Recebido', 'Em preparo', 'Entregador a caminho', 'Entregue', 'Cancelado'])
+
+export const formasDePagamento = pgEnum('formas_de_pagamento', ['pix', 'credito', 'debito', 'dinheiro'])
+
+export const pedidos = pgTable('pedidos', {
+  id: serial("id").notNull().primaryKey(),
+  status: statusPedidos('status').notNull().default('Pendente'),
+  clienteId: integer('cliente_id').notNull().references(() => clientes.id, {
+    onUpdate: 'cascade',
+    onDelete: 'cascade'
+  }),
+  cep: varchar("cep", { length: 255 }).notNull(),
+  rua: varchar("rua", { length: 255 }).notNull(),
+  numero: integer("numero").notNull(),
+  complemento: varchar("complemento", { length: 255 }),
+  bairro: varchar("bairro", { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  observacao: text('observacao'),
+  formaDePagamento: formasDePagamento('forma_de_pagamento').notNull().default('dinheiro')
+})
+
+export const pedidosRelations = relations(pedidos, ({one, many}) => ({
+  cliente: one(clientes, {
+    fields: [pedidos.clienteId],
+    references: [clientes.id]
+  }),
+  produtosPedidos: many(produtosPedidos)
+}))
+
+export const produtosPedidos = pgTable('produtos_pedidos', {
+  id: serial("id").notNull().primaryKey(),
+  pedidoId: integer('pedido_id').notNull().references(() => pedidos.id, {
+    onDelete: 'cascade',
+    onUpdate: 'cascade'
+  }),
+  produtoId: integer('produto_id').notNull().references(() => produtos.id, {
+    onUpdate: 'cascade',
+    onDelete: 'cascade'
+  })
+})
+
+export const produtosPedidosRelations = relations(produtosPedidos, ({one}) => ({
+  produto: one(produtos, {
+    fields: [produtosPedidos.produtoId],
+    references: [produtos.id]
+  }),
+  pedido: one(pedidos, {
+    fields: [produtosPedidos.pedidoId],
+    references: [pedidos.id]
+  })
+}))
