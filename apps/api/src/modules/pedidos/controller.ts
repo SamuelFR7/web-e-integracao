@@ -27,6 +27,24 @@ async function detalharPedido(req: Request, res: Response) {
 
   const pedido = await db.query.pedidos.findFirst({
     where: (pedidos, { eq }) => eq(pedidos.id, id),
+    with: {
+      cliente: {
+        columns: {
+          nome: true,
+          cpf: true
+        }
+      },
+      produtosPedidos: {
+        with: {
+          produto: {
+            columns: {
+              nome: true,
+              preco: true,
+            }
+          }
+        }
+      }
+    }
   })
 
   if (!pedido) {

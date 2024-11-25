@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
+import { X } from "lucide-react"
 import { Link } from "react-router"
+import { DetalhePedido } from "~/components/pedido-status"
 import { api } from "~/lib/api"
-import { cn } from "~/lib/utils"
 
 type ListarPedidosResponse = {
   pedidos: {
@@ -32,9 +33,15 @@ export function ListarPedidos() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <h1 className="font-bold text-2xl self-center">
-        LISTA DE PEDIDOS EM ANDAMENTO
-      </h1>
+      <div className="flex items-center justify-between">
+        <div />
+        <h1 className="font-bold text-2xl self-center">
+          LISTA DE PEDIDOS EM ANDAMENTO
+        </h1>
+        <Link to="/">
+          <X className="h-8 w-8" />
+        </Link>
+      </div>
       <div className="space-y-4 w-[450px]">
         {result &&
           !isLoading &&
@@ -69,50 +76,4 @@ export function ListarPedidos() {
   )
 }
 
-function DetalhePedido({
-  status,
-}: {
-  status:
-    | "Pendente"
-    | "Recebido"
-    | "Em preparo"
-    | "Entregador a caminho"
-    | "Entregue"
-    | "Cancelado"
-}) {
-  return (
-    <>
-      {['Pendente'].includes(status) && (
-      <div className="px-6 rounded-full py-1 bg-[#FF0000]">
-          <span className="font-bold">{status}</span>
-      </div>
-      )}
-      {['Recebido'].includes(status) && (
-      <div className="px-6 rounded-full py-1 bg-[#0FC27D]">
-          <span className="font-bold">{status}</span>
-      </div>
-      )}
-      {['Em preparo'].includes(status) && (
-      <div className="px-6 rounded-full py-1 bg-[#FFC300]">
-          <span className="font-bold">{status.toUpperCase()}</span>
-      </div>
-      )}
-      {['Entregador a caminho'].includes(status) && (
-      <div className="px-6 rounded-full py-1 bg-[#00D0FF]">
-          <span className="font-bold">{status}</span>
-      </div>
-      )}
-      {['Entregue'].includes(status) && (
-      <div className="px-6 rounded-full py-1 bg-[#0FC27D]">
-          <span className="font-bold">{status}</span>
-      </div>
-      )}
-      {['Cancelado'].includes(status) && (
-      <div className="px-6 rounded-full py-1 bg-[#FFC300]">
-          <span className="font-bold">{status}</span>
-      </div>
-      )}
-    </>
-  )
-}
 
