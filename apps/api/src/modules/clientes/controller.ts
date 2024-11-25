@@ -19,7 +19,6 @@ const cadastrarClienteSchema = z.object({
 
 async function cadastrarCliente(req: Request, res: Response) {
   const data = cadastrarClienteSchema.parse(req.body)
-  console.log(data)
 
   await db.insert(clientes).values({ ...data })
 

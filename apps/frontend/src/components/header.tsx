@@ -24,7 +24,7 @@ export function Header() {
                 </DropdownMenu.Item>
                 <DropdownMenu.Item asChild>
                   <Link
-                    to="/cadastro/produto"
+                    to="/cadastro/produtos"
                     className={cn(buttonVariants(), "w-[200px]")}
                   >
                     PRODUTO

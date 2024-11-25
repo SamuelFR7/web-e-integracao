@@ -15,6 +15,20 @@
       "when": 1732488213711,
       "tag": "0001_spicy_skreet",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732490903326,
+      "tag": "0002_smooth_annihilus",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732491534493,
+      "tag": "0003_superb_matthew_murdock",
+      "breakpoints": true
     }
   ]
 }

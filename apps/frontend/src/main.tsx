@@ -10,6 +10,8 @@ import { api } from "./lib/api"
 import { DashboardLayout } from "./layouts/dashboard-layout"
 import { ModalLayout } from "./layouts/modal-layout"
 import { CadastroCliente } from "./pages/cadastro-cliente"
+import { CadastroCategoria } from "./pages/cadastro-categoria"
+import { CadastroProduto } from "./pages/cadastro-produto"
 
 const router = createBrowserRouter([
   {
@@ -52,6 +54,21 @@ const router = createBrowserRouter([
               {
                 path: "/cadastro/clientes",
                 element: <CadastroCliente />,
+              },
+              {
+                path: "/cadastro/categorias",
+                element: <CadastroCategoria />,
+              },
+              {
+                path: "/cadastro/produtos",
+                element: <CadastroProduto />,
+                loader: async () => {
+                  const { data } = await api.get<{
+                    categorias: { codigo: number; nome: string; id: number }[]
+                  }>("/categorias")
+
+                  return data
+                },
               },
             ],
           },
