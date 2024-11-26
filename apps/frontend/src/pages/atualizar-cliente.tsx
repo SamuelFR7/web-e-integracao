@@ -10,56 +10,73 @@ import { Button } from "~/components/ui/button"
 import { Save } from "lucide-react"
 import { useMutation } from "@tanstack/react-query"
 import { api } from "~/lib/api"
-import { useNavigate } from "react-router"
+import { useLoaderData, useNavigate } from "react-router"
 
 const formSchema = z.object({
-  codigo: z.string(),
-  apelido: z.string(),
-  nome: z.string(),
+  codigo: z.string().optional(),
+  apelido: z.string().optional(),
+  nome: z.string().optional(),
   tipo: z.string().optional(),
-  cpf: z.string().refine((v) => cpf.isValid(v), "CPF inválido"),
-  cep: z.string(),
-  rua: z.string(),
-  numero: z.number().positive(),
+  cpf: z
+    .string()
+    .refine((v) => cpf.isValid(v), "CPF inválido")
+    .optional(),
+  cep: z.string().optional(),
+  rua: z.string().optional(),
+  numero: z.number().positive().optional(),
   complemento: z.string().optional(),
-  bairro: z.string(),
+  bairro: z.string().optional(),
 })
 
 type Input = z.infer<typeof formSchema>
 
-export function CadastroCliente() {
+export function AtualizarCliente() {
+  const data = useLoaderData<{
+    id: number
+    codigo: string
+    apelido: string
+    nome: string
+    tipo: string | null
+    cpf: string
+    cep: string
+    rua: string
+    numero: number
+    complemento: string | null
+    bairro: string
+  }>()
   const navigate = useNavigate()
   const form = useForm<Input>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      apelido: "",
-      bairro: "",
-      cep: "",
-      codigo: "",
-      complemento: "",
-      cpf: "",
-      nome: "",
-      numero: 1,
-      rua: "",
-      tipo: "",
+      apelido: data.apelido,
+      bairro: data.bairro,
+      cep: data.cep,
+      codigo: data.codigo,
+      complemento: data.complemento ?? "",
+      cpf: data.cpf,
+      nome: data.nome,
+      numero: data.numero,
+      rua: data.rua,
+      tipo: data.tipo ?? "",
     },
   })
 
   const mutation = useMutation({
-    mutationFn: async (data: Input) => await api.post("/clientes", data),
+    mutationFn: async (values: Input) =>
+      await api.patch(`/clientes/${data.id}`, values),
     onSuccess() {
       form.reset()
       navigate("/cadastro/clientes")
     },
   })
 
-  function onSubmit(data: Input) {
-    mutation.mutate(data)
+  function onSubmit(values: Input) {
+    mutation.mutate(values)
   }
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <h1 className="font-bold text-2xl self-center">CADASTRO CLIENTES</h1>
+      <h1 className="font-bold text-2xl self-center">ATUALIZAR CLIENTE</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
         <div className="grid grid-cols-3 gap-2">
           <FormItem>

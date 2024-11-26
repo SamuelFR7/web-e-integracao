@@ -1,4 +1,5 @@
 import { cpf } from "br-docs-validator"
+import { eq } from "drizzle-orm"
 import type { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "~/db/db"
@@ -17,6 +18,26 @@ const cadastrarClienteSchema = z.object({
   bairro: z.string().toUpperCase(),
 })
 
+const atualizarClienteSchema = z.object({
+  codigo: z.string().toUpperCase().optional(),
+  apelido: z.string().toUpperCase().optional(),
+  nome: z.string().toUpperCase().optional(),
+  tipo: z.string().toUpperCase().optional().optional(),
+  cpf: z
+    .string()
+    .refine((v) => cpf.isValid(v), "CPF inválido")
+    .optional(),
+  cep: z.string().optional(),
+  rua: z.string().toUpperCase().optional(),
+  numero: z.number().positive().optional(),
+  complemento: z.string().toUpperCase().optional().optional(),
+  bairro: z.string().toUpperCase().optional(),
+})
+
+const paramsSchema = z.object({
+  id: z.coerce.number(),
+})
+
 async function cadastrarCliente(req: Request, res: Response) {
   const data = cadastrarClienteSchema.parse(req.body)
 
@@ -26,6 +47,47 @@ async function cadastrarCliente(req: Request, res: Response) {
   return
 }
 
+async function listarClientes(_: Request, res: Response) {
+  const clientes = await db.query.clientes.findMany()
+
+  res.status(200).json(clientes)
+  return
+}
+
+async function mostrarCliente(req: Request, res: Response) {
+  const { id } = paramsSchema.parse(req.params)
+
+  const cliente = await db.query.clientes.findFirst({
+    where: (clientes, { eq }) => eq(clientes.id, id),
+  })
+
+  res.status(200).json(cliente)
+  return
+}
+
+async function atualizarCliente(req: Request, res: Response) {
+  const { id } = paramsSchema.parse(req.params)
+  const data = atualizarClienteSchema.parse(req.body)
+
+  await db.update(clientes).set(data).where(eq(clientes.id, id))
+
+  res.status(200).send({ message: "Cliente atualizado com sucesso" })
+
+  return
+}
+
+async function excluirCliente(req: Request, res: Response) {
+  const { id } = paramsSchema.parse(req.params)
+
+  await db.delete(clientes).where(eq(clientes.id, id))
+  res.status(200).json({ message: "Cliente excluido com sucesso" })
+  return
+}
+
 export default {
   cadastrarCliente,
+  listarClientes,
+  mostrarCliente,
+  atualizarCliente,
+  excluirCliente,
 }
