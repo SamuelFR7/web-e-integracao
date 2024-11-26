@@ -3,11 +3,7 @@ import { z } from "zod"
 import { db } from "~/db/db"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-
-const signInSchema = z.object({
-  email: z.string().toLowerCase().email(),
-  senha: z.string(),
-})
+import { signInSchema } from "./dtos"
 
 async function signIn(req: Request, res: Response) {
   const { email, senha } = signInSchema.parse(req.body)
