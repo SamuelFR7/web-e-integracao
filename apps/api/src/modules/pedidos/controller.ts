@@ -36,7 +36,7 @@ async function listarPedidos(_: Request, res: Response) {
       clientes.nome
     )
 
-  res.status(200).json({ pedidos })
+  res.status(200).json(pedidos)
   return
 }
 
@@ -70,11 +70,11 @@ async function detalharPedido(req: Request, res: Response) {
     return
   }
 
-  res.status(200).json({ pedido })
+  res.status(200).json(pedido)
   return
 }
 
-export async function exportarRelatorio(req: Request, res: Response) {
+export async function exportarRelatorio(_: Request, res: Response) {
   const pedidos = await db
     .select({
       id: pedidosRaw.id,
@@ -138,6 +138,15 @@ async function criarPedido(req: Request, res: Response) {
 
 async function atualizarStatusPedido(req: Request, res: Response) {
   const { id } = paramsSchema.parse(req.params)
+
+  const pedido = await db.query.pedidos.findFirst({
+    where: (pedidos, { eq }) => eq(pedidos.id, id),
+  })
+
+  if (!pedido) {
+    res.status(404).json({ message: "Pedido não encontrado" })
+    return
+  }
 
   const data = z
     .object({
