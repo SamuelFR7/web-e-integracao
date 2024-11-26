@@ -10,10 +10,7 @@ export const users = pgTable("users", {
 
 export const clientes = pgTable("clientes", {
   id: serial("id").notNull().primaryKey(),
-  codigo: varchar("codigo", { length: 10 }).notNull(),
-  apelido: varchar("apelido", { length: 255 }).notNull(),
   nome: varchar("nome", { length: 255 }).notNull(),
-  tipo: varchar("tipo", { length: 255 }),
   cpf: varchar("cpf", { length: 255 }).notNull(),
   cep: varchar("cep", { length: 255 }).notNull(),
   rua: varchar("rua", { length: 255 }).notNull(),
