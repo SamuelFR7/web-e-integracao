@@ -15,6 +15,13 @@
       "when": 1732659493847,
       "tag": "0001_military_queen_noir",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732661103714,
+      "tag": "0002_serious_baron_strucker",
+      "breakpoints": true
     }
   ]
 }

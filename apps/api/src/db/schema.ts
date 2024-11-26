@@ -43,7 +43,6 @@ export const produtosRelations = relations(produtos, ({ one }) => ({
 
 export const categorias = pgTable("categorias", {
   id: serial("id").notNull().primaryKey(),
-  codigo: varchar("codigo", { length: 10 }).notNull(),
   nome: varchar("nome", { length: 255 }).notNull(),
 })
 
