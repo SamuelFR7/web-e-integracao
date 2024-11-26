@@ -4,25 +4,10 @@ import { z } from "zod"
 import { db } from "~/db/db"
 import { produtos } from "~/db/schema"
 import { paramsSchema } from "~/shared/schemas"
-
-const cadastrarProdutoSchema = z.object({
-  codigo: z.string().toUpperCase(),
-  nome: z.string().toUpperCase(),
-  tamanho: z.enum(["P", "M", "G"]),
-  categoriaId: z.number(),
-  preco: z.number().int().positive(),
-})
-
-const atualizarProdutoSchema = z.object({
-  codigo: z.string().toUpperCase().optional(),
-  nome: z.string().toUpperCase().optional(),
-  tamanho: z.enum(["P", "M", "G"]).optional(),
-  categoriaId: z.number().optional(),
-  preco: z.number().int().positive().optional(),
-})
+import { createProdutoSchema, updateProdutoSchema } from "./dtos"
 
 async function cadastrarProduto(req: Request, res: Response) {
-  const data = cadastrarProdutoSchema.parse(req.body)
+  const data = createProdutoSchema.parse(req.body)
 
   await db.insert(produtos).values(data)
 
@@ -30,7 +15,7 @@ async function cadastrarProduto(req: Request, res: Response) {
   return
 }
 
-async function listarProduto(req: Request, res: Response) {
+async function listarProduto(_: Request, res: Response) {
   const produtos = await db.query.produtos.findMany()
 
   res.status(200).json(produtos)
@@ -44,7 +29,7 @@ async function mostrarProduto(req: Request, res: Response) {
   })
 
   if (!produto) {
-    res.status(404).json({ message: "Não encontrado" })
+    res.status(404).json({ message: "Produto não encontrado" })
   }
 
   res.status(200).json(produto)
@@ -54,7 +39,7 @@ async function mostrarProduto(req: Request, res: Response) {
 async function atualizarProduto(req: Request, res: Response) {
   const { id } = paramsSchema.parse(req.params)
 
-  const data = atualizarProdutoSchema.parse(req.body)
+  const data = updateProdutoSchema.parse(req.body)
 
   await db.update(produtos).set(data).where(eq(produtos.id, id))
 

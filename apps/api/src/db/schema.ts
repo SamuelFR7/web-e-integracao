@@ -26,7 +26,6 @@ export const tamanhosEnum = pgEnum("tamanhos", ["P", "M", "G"])
 
 export const produtos = pgTable("produtos", {
   id: serial("id").notNull().primaryKey(),
-  codigo: varchar("codigo", { length: 10 }).notNull(),
   nome: varchar("nome", { length: 255 }).notNull(),
   tamanho: tamanhosEnum("tamanho").notNull(),
   categoriaId: integer("categoria_id")
