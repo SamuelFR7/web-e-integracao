@@ -4,6 +4,7 @@ import type { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "~/db/db"
 import { clientes } from "~/db/schema"
+import { paramsSchema } from "~/shared/schemas"
 
 const cadastrarClienteSchema = z.object({
   codigo: z.string().toUpperCase(),
@@ -32,10 +33,6 @@ const atualizarClienteSchema = z.object({
   numero: z.number().positive().optional(),
   complemento: z.string().toUpperCase().optional().optional(),
   bairro: z.string().toUpperCase().optional(),
-})
-
-const paramsSchema = z.object({
-  id: z.coerce.number(),
 })
 
 async function cadastrarCliente(req: Request, res: Response) {
