@@ -1,0 +1,1 @@
+ALTER TABLE "categorias" DROP COLUMN IF EXISTS "codigo";

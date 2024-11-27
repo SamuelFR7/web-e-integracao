@@ -21,6 +21,8 @@ import { CadastroCupom } from "./pages/cadastro-cupom"
 import { ListarPedidos, ListarPedidosResponse } from "./pages/listar-pedidos"
 import { DetalhesDoPedido } from "./pages/detalhes-do-pedido"
 import { RelatorioDePedidos } from "./pages/relatorio-de-pedidos"
+import { ListarCliente } from "./pages/listar-cliente"
+import { AtualizarCliente } from "./pages/atualizar-cliente"
 
 export type GetPedidoResponse = {
   pedido: {
@@ -94,8 +96,27 @@ const router = createBrowserRouter([
             element: <ModalLayout />,
             children: [
               {
-                path: "/cadastro/clientes",
+                path: "/cadastro/clientes/novo",
                 element: <CadastroCliente />,
+              },
+              {
+                path: "/cadastro/clientes",
+                element: <ListarCliente />,
+                loader: async () => {
+                  const { data } = await api.get("/clientes")
+
+                  return data
+                },
+              },
+
+              {
+                path: "/cadastro/clientes/:id",
+                element: <AtualizarCliente />,
+                loader: async ({ params }) => {
+                  const { data } = await api.get(`/clientes/${params.id}`)
+
+                  return data
+                },
               },
               {
                 path: "/cadastro/categorias",
@@ -141,7 +162,8 @@ const router = createBrowserRouter([
                 path: "/relatorio",
                 element: <RelatorioDePedidos />,
                 loader: async () => {
-                  const { data }= await api.get<ListarPedidosResponse>("/pedidos")
+                  const { data } =
+                    await api.get<ListarPedidosResponse>("/pedidos")
 
                   return data
                 },

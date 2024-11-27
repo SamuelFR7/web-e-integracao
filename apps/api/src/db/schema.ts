@@ -10,10 +10,7 @@ export const users = pgTable("users", {
 
 export const clientes = pgTable("clientes", {
   id: serial("id").notNull().primaryKey(),
-  codigo: varchar("codigo", { length: 10 }).notNull(),
-  apelido: varchar("apelido", { length: 255 }).notNull(),
   nome: varchar("nome", { length: 255 }).notNull(),
-  tipo: varchar("tipo", { length: 255 }),
   cpf: varchar("cpf", { length: 255 }).notNull(),
   cep: varchar("cep", { length: 255 }).notNull(),
   rua: varchar("rua", { length: 255 }).notNull(),
@@ -26,7 +23,6 @@ export const tamanhosEnum = pgEnum("tamanhos", ["P", "M", "G"])
 
 export const produtos = pgTable("produtos", {
   id: serial("id").notNull().primaryKey(),
-  codigo: varchar("codigo", { length: 10 }).notNull(),
   nome: varchar("nome", { length: 255 }).notNull(),
   tamanho: tamanhosEnum("tamanho").notNull(),
   categoriaId: integer("categoria_id")
@@ -35,7 +31,8 @@ export const produtos = pgTable("produtos", {
       onDelete: "cascade",
       onUpdate: "cascade",
     }),
-  preco: integer('preco').notNull().default(0)
+  preco: integer('preco').notNull().default(0),
+  imagem: varchar('imagem')
 })
 
 export const produtosRelations = relations(produtos, ({ one }) => ({
@@ -47,7 +44,6 @@ export const produtosRelations = relations(produtos, ({ one }) => ({
 
 export const categorias = pgTable("categorias", {
   id: serial("id").notNull().primaryKey(),
-  codigo: varchar("codigo", { length: 10 }).notNull(),
   nome: varchar("nome", { length: 255 }).notNull(),
 })
 
@@ -99,7 +95,8 @@ export const produtosPedidos = pgTable('produtos_pedidos', {
   produtoId: integer('produto_id').notNull().references(() => produtos.id, {
     onUpdate: 'cascade',
     onDelete: 'cascade'
-  })
+  }),
+  quantidade: integer('quantidade').notNull()
 })
 
 export const produtosPedidosRelations = relations(produtosPedidos, ({one}) => ({
