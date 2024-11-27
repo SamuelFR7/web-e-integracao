@@ -94,7 +94,8 @@ export const produtosPedidos = pgTable('produtos_pedidos', {
   produtoId: integer('produto_id').notNull().references(() => produtos.id, {
     onUpdate: 'cascade',
     onDelete: 'cascade'
-  })
+  }),
+  quantidade: integer('quantidade').notNull()
 })
 
 export const produtosPedidosRelations = relations(produtosPedidos, ({one}) => ({

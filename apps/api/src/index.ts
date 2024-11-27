@@ -15,6 +15,7 @@ import categoriasRouter from "./modules/categorias/routes"
 import produtosRouter from "./modules/produtos/routes"
 import cuponsRouter from "./modules/cupons/routes"
 import pedidosRouter from "./modules/pedidos/routes"
+import relatoriosRouter from "./modules/relatorios/routes"
 
 const app = express()
 
@@ -35,6 +36,7 @@ app.use(categoriasRouter)
 app.use(produtosRouter)
 app.use(cuponsRouter)
 app.use(pedidosRouter)
+app.use(relatoriosRouter)
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.log("chegou aqui pelo menos")

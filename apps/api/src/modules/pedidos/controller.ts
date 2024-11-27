@@ -1,4 +1,4 @@
-import { eq, sum } from "drizzle-orm"
+import { eq, sql, sum } from "drizzle-orm"
 import type { Request, Response } from "express"
 import { z } from "zod"
 import { db } from "~/db/db"
@@ -9,8 +9,6 @@ import {
   produtos,
   produtosPedidos,
 } from "~/db/schema"
-import xlsx from "xlsx"
-import dayjs from "dayjs"
 import { createPedidoSchema } from "./dtos"
 import { paramsSchema } from "~/shared/schemas"
 
@@ -23,7 +21,9 @@ async function listarPedidos(_: Request, res: Response) {
       cliente: {
         nome: clientes.nome,
       },
-      valorTotal: sum(produtos.preco),
+      valorTotal: sum(
+        sql`${produtos.preco} * ${produtosPedidos.quantidade}`.mapWith(Number)
+      ).mapWith(Number),
     })
     .from(pedidosRaw)
     .leftJoin(clientes, eq(pedidosRaw.clienteId, clientes.id))
@@ -74,63 +74,29 @@ async function detalharPedido(req: Request, res: Response) {
   return
 }
 
-export async function exportarRelatorio(_: Request, res: Response) {
-  const pedidos = await db
-    .select({
-      id: pedidosRaw.id,
-      status: pedidosRaw.status,
-      createdAt: pedidosRaw.createdAt,
-      cliente: clientes.nome,
-      valorTotal: sum(produtos.preco),
-    })
-    .from(pedidosRaw)
-    .leftJoin(clientes, eq(pedidosRaw.clienteId, clientes.id))
-    .leftJoin(produtosPedidos, eq(pedidosRaw.id, produtosPedidos.pedidoId))
-    .leftJoin(produtos, eq(produtosPedidos.produtoId, produtos.id))
-    .groupBy(
-      pedidosRaw.id,
-      pedidosRaw.status,
-      pedidosRaw.createdAt,
-      clientes.nome
-    )
-
-  const mappedPedidos = pedidos.map((pedido) => {
-    return {
-      id: pedido.id,
-      status: pedido.status,
-      pedidoEm: pedido.createdAt,
-      cliente: pedido.cliente,
-      valorTotal: pedido.valorTotal ? Number(pedido.valorTotal) / 100 : 0,
-    }
-  })
-
-  const worksheet = xlsx.utils.json_to_sheet(mappedPedidos)
-
-  const workbook = xlsx.utils.book_new()
-
-  xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1")
-
-  const excelBuffer = xlsx.write(workbook, { bookType: "xlsx", type: "buffer" })
-
-  const today = dayjs().format("YYYY-MM-DD-HHmmss")
-
-  res
-    .setHeader(
-      "Content-Disposition",
-      `attachment; filename="relatorio-pedidos-${today}.xlsx"`
-    )
-    .setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    .send(excelBuffer)
-  return
-}
-
 async function criarPedido(req: Request, res: Response) {
   const data = createPedidoSchema.parse(req.body)
 
-  await db.insert(pedidos).values(data)
+  await db.transaction(async (tx) => {
+    const [pedido] = await db
+      .insert(pedidos)
+      .values(data)
+      .returning({ id: pedidos.id })
+
+    if (!pedido) {
+      return tx.rollback()
+    }
+
+    await db.insert(produtosPedidos).values(
+      data.produtos.map((produto) => {
+        return {
+          pedidoId: pedido.id,
+          produtoId: produto.produtoId,
+          quantidade: produto.quantidade,
+        }
+      })
+    )
+  })
 
   res.status(201).send({ message: "Pedido criado com sucesso" })
   return
@@ -170,7 +136,6 @@ async function atualizarStatusPedido(req: Request, res: Response) {
 export default {
   listarPedidos,
   detalharPedido,
-  exportarRelatorio,
   criarPedido,
   atualizarStatusPedido,
 }
