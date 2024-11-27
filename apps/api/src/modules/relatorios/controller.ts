@@ -1,15 +1,14 @@
 import { db } from "~/db/db"
 import {
   clientes,
-  produtos,
   pedidos as pedidosRaw,
   produtosPedidos,
+  produtos,
 } from "~/db/schema"
 import { sum, sql, eq, count, gt } from "drizzle-orm"
 import xlsx from "xlsx"
 import dayjs from "dayjs"
 import type { Request, Response } from "express"
-import { warn } from "console"
 
 async function excelPedidos(_: Request, res: Response) {
   const pedidos = await db
@@ -81,7 +80,26 @@ async function dashboardPedidos(_req: Request, res: Response) {
   return
 }
 
+async function dashboardProdutos(_req: Request, res: Response) {
+  const result = await db
+    .select({
+      quantidadeTotal: sum(produtosPedidos.quantidade),
+      produto: {
+        id: produtosPedidos.produtoId,
+        nome: produtos.nome,
+      },
+    })
+    .from(produtosPedidos)
+    .innerJoin(produtos, eq(produtosPedidos.id, produtos.id))
+    .groupBy(produtosPedidos.produtoId, produtos.nome, produtosPedidos.id)
+    .orderBy(produtosPedidos.id)
+
+  res.status(200).json(result)
+  return
+}
+
 export default {
   excelPedidos,
   dashboardPedidos,
+  dashboardProdutos,
 }
