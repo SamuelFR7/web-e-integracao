@@ -1,5 +1,5 @@
 {
-  "id": "3db631f2-f678-4f77-b992-408585bc04d7",
+  "id": "d0d2e896-101c-484f-9838-86c3f8ca14f3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -12,12 +12,6 @@
           "name": "id",
           "type": "serial",
           "primaryKey": true,
-          "notNull": true
-        },
-        "codigo": {
-          "name": "codigo",
-          "type": "varchar(10)",
-          "primaryKey": false,
           "notNull": true
         },
         "nome": {
@@ -45,29 +39,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "codigo": {
-          "name": "codigo",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "apelido": {
-          "name": "apelido",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "nome": {
           "name": "nome",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
-        },
-        "tipo": {
-          "name": "tipo",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
         },
         "cpf": {
           "name": "cpf",
@@ -278,6 +254,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
+        },
+        "imagem": {
+          "name": "imagem",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -320,6 +302,12 @@
         },
         "produto_id": {
           "name": "produto_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantidade": {
+          "name": "quantidade",
           "type": "integer",
           "primaryKey": false,
           "notNull": true

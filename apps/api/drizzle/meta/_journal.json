@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1732658184270,
-      "tag": "0000_workable_gideon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1732659493847,
-      "tag": "0001_military_queen_noir",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1732661103714,
-      "tag": "0002_serious_baron_strucker",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1732669740518,
-      "tag": "0003_redundant_dormammu",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1732671654351,
-      "tag": "0004_omniscient_sentinels",
+      "when": 1732745041962,
+      "tag": "0000_melodic_manta",
       "breakpoints": true
     }
   ]

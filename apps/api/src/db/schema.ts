@@ -32,7 +32,7 @@ export const produtos = pgTable("produtos", {
       onUpdate: "cascade",
     }),
   preco: integer('preco').notNull().default(0),
-  imagem: varchar('imagem')
+  imagem: varchar('imagem').notNull()
 })
 
 export const produtosRelations = relations(produtos, ({ one }) => ({

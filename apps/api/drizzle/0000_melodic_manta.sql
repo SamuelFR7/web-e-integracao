@@ -3,16 +3,12 @@ CREATE TYPE "public"."status_pedidos" AS ENUM('Pendente', 'Recebido', 'Em prepar
 CREATE TYPE "public"."tamanhos" AS ENUM('P', 'M', 'G');--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "categorias" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"codigo" varchar(10) NOT NULL,
 	"nome" varchar(255) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "clientes" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"codigo" varchar(10) NOT NULL,
-	"apelido" varchar(255) NOT NULL,
 	"nome" varchar(255) NOT NULL,
-	"tipo" varchar(255),
 	"cpf" varchar(255) NOT NULL,
 	"cep" varchar(255) NOT NULL,
 	"rua" varchar(255) NOT NULL,
@@ -46,13 +42,15 @@ CREATE TABLE IF NOT EXISTS "produtos" (
 	"nome" varchar(255) NOT NULL,
 	"tamanho" "tamanhos" NOT NULL,
 	"categoria_id" integer NOT NULL,
-	"preco" integer DEFAULT 0 NOT NULL
+	"preco" integer DEFAULT 0 NOT NULL,
+	"imagem" varchar NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "produtos_pedidos" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"pedido_id" integer NOT NULL,
-	"produto_id" integer NOT NULL
+	"produto_id" integer NOT NULL,
+	"quantidade" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
