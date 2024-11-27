@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query"
 import { Pencil, Plus, Trash } from "lucide-react"
 import { Link, useLoaderData, useNavigate } from "react-router"
+import { ModalHeader } from "~/components/modal-header"
 import { Button, buttonVariants } from "~/components/ui/button"
 import {
   Table,
@@ -12,27 +13,21 @@ import {
 } from "~/components/ui/table"
 import { api } from "~/lib/api"
 import { cn } from "~/lib/utils"
+import { deletarCliente } from "~/utils/http/clientes/deletar-cliente"
+import { listarClientes } from "~/utils/http/clientes/listar-clientes"
+
+export async function loader() {
+  const clientes = await listarClientes()
+
+  return clientes
+}
 
 export function ListarCliente() {
   const navigate = useNavigate()
-  const data = useLoaderData<
-    {
-      codigo: string
-      apelido: string
-      nome: string
-      tipo: string | null
-      cpf: string
-      cep: string
-      rua: string
-      numero: number
-      complemento: string | null
-      bairro: string
-      id: number
-    }[]
-  >()
+  const data = useLoaderData<typeof loader>()
 
   const mutation = useMutation({
-    mutationFn: async (id: number) => await api.delete(`/clientes/${id}`),
+    mutationFn: async (id: number) => await deletarCliente(id),
     onSuccess() {
       navigate("/cadastro/clientes/")
     },
@@ -44,7 +39,7 @@ export function ListarCliente() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <h1 className="font-bold text-2xl self-center">LISTAR CLIENTES</h1>
+      <ModalHeader title="LISTAR CLIENTES" />
       <div>
         <Link
           to="/cadastro/clientes/novo"
@@ -60,7 +55,6 @@ export function ListarCliente() {
             <TableRow className="font-medium">
               <TableHead>NOME</TableHead>
               <TableHead>CPF</TableHead>
-              <TableHead>APELIDO</TableHead>
               <TableHead>AÇÕES</TableHead>
             </TableRow>
           </TableHeader>
@@ -69,7 +63,6 @@ export function ListarCliente() {
               <TableRow key={cliente.id} className="font-bold">
                 <TableCell>{cliente.nome}</TableCell>
                 <TableCell>{cliente.cpf}</TableCell>
-                <TableCell>{cliente.apelido}</TableCell>
                 <TableCell className="flex items-center gap-4">
                   <Link
                     className={cn(buttonVariants({ size: "icon" }))}

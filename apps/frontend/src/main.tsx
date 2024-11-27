@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client"
 import {
   createBrowserRouter,
-  LoaderFunctionArgs,
   redirect,
   RouterProvider,
 } from "react-router"
@@ -21,7 +20,7 @@ import { CadastroCupom } from "./pages/cadastro-cupom"
 import { ListarPedidos, ListarPedidosResponse } from "./pages/listar-pedidos"
 import { DetalhesDoPedido } from "./pages/detalhes-do-pedido"
 import { RelatorioDePedidos } from "./pages/relatorio-de-pedidos"
-import { ListarCliente } from "./pages/listar-cliente"
+import { ListarCliente, loader as listarClienteLoader } from "./pages/listar-cliente"
 import { AtualizarCliente } from "./pages/atualizar-cliente"
 
 export type GetPedidoResponse = {
@@ -102,11 +101,7 @@ const router = createBrowserRouter([
               {
                 path: "/cadastro/clientes",
                 element: <ListarCliente />,
-                loader: async () => {
-                  const { data } = await api.get("/clientes")
-
-                  return data
-                },
+                loader: listarClienteLoader,
               },
 
               {

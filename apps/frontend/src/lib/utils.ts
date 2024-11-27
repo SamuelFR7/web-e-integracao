@@ -19,3 +19,14 @@ export function formatValue(value: number) {
     currency: "BRL",
   })
 }
+
+export function invariantResponse(
+  value: unknown,
+  message: string
+): asserts value {
+  if (!value) {
+    throw new Response(message, {
+      status: 400,
+    })
+  }
+}
