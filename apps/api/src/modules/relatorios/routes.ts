@@ -5,6 +5,7 @@ import { ensureAuthMiddleware } from "../auth/middleware"
 const relatoriosRouter = express.Router()
 
 relatoriosRouter.use(ensureAuthMiddleware)
-relatoriosRouter.get("/relatorios/pedidos", relatoriosController.excelPedidos)
+relatoriosRouter.get("/relatorios/pedidos/xlsx", relatoriosController.excelPedidos)
+relatoriosRouter.get("/relatorios/pedidos/dashboard", relatoriosController.dashboardPedidos)
 
 export default relatoriosRouter 

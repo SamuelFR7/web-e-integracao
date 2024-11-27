@@ -5,10 +5,11 @@ import {
   pedidos as pedidosRaw,
   produtosPedidos,
 } from "~/db/schema"
-import { sum, sql, eq } from "drizzle-orm"
+import { sum, sql, eq, count, gt } from "drizzle-orm"
 import xlsx from "xlsx"
 import dayjs from "dayjs"
 import type { Request, Response } from "express"
+import { warn } from "console"
 
 async function excelPedidos(_: Request, res: Response) {
   const pedidos = await db
@@ -65,6 +66,22 @@ async function excelPedidos(_: Request, res: Response) {
   return
 }
 
+async function dashboardPedidos(_req: Request, res: Response) {
+  const pedidos = await db
+    .select({
+      dia: sql`DATE(${pedidosRaw.createdAt})`,
+      qtdPedidos: count(pedidosRaw.id),
+    })
+    .from(pedidosRaw)
+    .groupBy(sql`DATE(${pedidosRaw.createdAt})`)
+    .orderBy(sql`DATE(${pedidosRaw.createdAt})`)
+    .where(gt(pedidosRaw.createdAt, dayjs().subtract(7, "days").toDate()))
+
+  res.status(200).json(pedidos)
+  return
+}
+
 export default {
   excelPedidos,
+  dashboardPedidos,
 }
