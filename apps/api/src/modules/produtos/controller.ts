@@ -1,18 +1,50 @@
 import { eq } from "drizzle-orm"
 import type { Request, Response } from "express"
-import { z } from "zod"
 import { db } from "~/db/db"
 import { produtos } from "~/db/schema"
 import { paramsSchema } from "~/shared/schemas"
 import { createProdutoSchema, updateProdutoSchema } from "./dtos"
+import { uploadMiddleware } from "~/shared/multer"
+import { ZodError } from "zod"
 
 async function cadastrarProduto(req: Request, res: Response) {
-  const data = createProdutoSchema.parse(req.body)
+  uploadMiddleware(req, res, async (err) => {
+    if (err) {
+      res.status(400).json({ message: err.message })
+      return
+    }
 
-  await db.insert(produtos).values(data)
+    try {
+      const data = createProdutoSchema.parse(req.body)
 
-  res.status(201).json({ message: "Produto cadastrado com sucesso" })
-  return
+      if (!req.file) {
+        res.status(400).json({ message: "Arquivo de imagem é obrigatório" })
+        return
+      }
+
+      const produtoData = {
+        ...data,
+        imagem: req.file.filename,
+      }
+
+      await db.insert(produtos).values(produtoData)
+
+      res.status(201).json({ message: "Produto cadastrado com sucesso" })
+      return
+    } catch (error) {
+      if (error instanceof ZodError) {
+        res.status(422).json({
+          message: "Erro de validação",
+          issues: error.format(),
+        })
+        return
+      }
+
+      // @ts-ignore
+      res.status(400).json({ message: error.message })
+      return
+    }
+  })
 }
 
 async function listarProduto(_: Request, res: Response) {
