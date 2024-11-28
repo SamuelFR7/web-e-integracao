@@ -16,12 +16,11 @@ import {
   FormMessage,
 } from "~/components/ui/form"
 import { invariantResponse } from "~/lib/utils"
-import { mostrarCupom } from "~/utils/http/cupons/mostrar-cupom"
-import { atualizarCupom } from "~/utils/http/cupons/atualizar-cupom"
+import { mostrarCategoria } from "~/utils/http/categorias/mostrar-categoria"
+import { atualizarCategoria } from "~/utils/http/categorias/atualizar-categoria"
 
 const formSchema = z.object({
-  codigo: z.string().max(10, "No máximo dez caracteres").toUpperCase().optional(),
-  valor: z.coerce.number().transform((v) => v * 100).optional(),
+  nome: z.string().toUpperCase().optional(),
 })
 
 type Input = z.infer<typeof formSchema>
@@ -31,27 +30,27 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   invariantResponse(id, "Id is missing")
 
-  const cupom = await mostrarCupom(Number(id))
+  const categoria = await mostrarCategoria(Number(id))
 
-  return cupom
+  return categoria
 }
 
-export function AtualizarCupom() {
+export function AtualizarCategoria() {
   const data = useLoaderData<typeof loader>()
   const navigate = useNavigate()
   const form = useForm<Input>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      codigo: data.codigo,
-      valor: data.valor / 100,
+      nome: data.nome,
     },
   })
 
   const mutation = useMutation({
-    mutationFn: async (values: Input) => await atualizarCupom(data.id, values),
+    mutationFn: async (values: Input) =>
+      await atualizarCategoria(data.id, values),
     onSuccess() {
       form.reset()
-      navigate("/cadastro/cupons")
+      navigate("/cadastro/categorias")
     },
   })
 
@@ -61,30 +60,17 @@ export function AtualizarCupom() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <ModalHeader title="ATUALIZAR CUPOM" goBack="/cadastro/cupons" />
+      <ModalHeader title="ATUALIZAR CATEGORIA" goBack="/cadastro/categorias" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <FormField
             control={form.control}
-            name="codigo"
+            name="nome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CODIGO</FormLabel>
+                <FormLabel>NOME</FormLabel>
                 <FormControl>
                   <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="valor"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>VALOR</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

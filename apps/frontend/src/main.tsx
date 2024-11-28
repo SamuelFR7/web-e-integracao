@@ -31,9 +31,26 @@ import {
   ListarProdutosPage,
   loader as listarProdutosLoader,
 } from "./pages/listar-produtos"
-import { AtualizarProduto, loader as atualizarProdutoLoader } from "./pages/atualizar-produto"
-import { ListarCuponsPage, loader as listarCuponsLoader  } from './pages/listar-cupons'
-import { AtualizarCupom, loader as atualizarCupomLoader } from "./pages/atualizar-cupom"
+import {
+  AtualizarProduto,
+  loader as atualizarProdutoLoader,
+} from "./pages/atualizar-produto"
+import {
+  ListarCuponsPage,
+  loader as listarCuponsLoader,
+} from "./pages/listar-cupons"
+import {
+  AtualizarCupom,
+  loader as atualizarCupomLoader,
+} from "./pages/atualizar-cupom"
+import {
+  ListarCategoriasPage,
+  loader as listarCategoriasLoader,
+} from "./pages/listar-categoria"
+import {
+  AtualizarCategoria,
+  loader as atualizarCategoriaLoader,
+} from "./pages/atualizar-categoria"
 
 export type GetPedidoResponse = {
   pedido: {
@@ -123,7 +140,17 @@ const router = createBrowserRouter([
               },
               {
                 path: "/cadastro/categorias",
+                element: <ListarCategoriasPage />,
+                loader: listarCategoriasLoader,
+              },
+              {
+                path: "/cadastro/categorias/novo",
                 element: <CadastroCategoria />,
+              },
+              {
+                path: "/cadastro/categorias/:id",
+                element: <AtualizarCategoria />,
+                loader: atualizarCategoriaLoader,
               },
               {
                 path: "/cadastro/produtos",
@@ -136,21 +163,21 @@ const router = createBrowserRouter([
                 loader: cadastroProdutoLoader,
               },
               {
-                path: '/cadastro/produtos/:id',
+                path: "/cadastro/produtos/:id",
                 element: <AtualizarProduto />,
-                loader: atualizarProdutoLoader
+                loader: atualizarProdutoLoader,
               },
               {
-                path: '/cadastro/cupons',
+                path: "/cadastro/cupons",
                 element: <ListarCuponsPage />,
-                loader: listarCuponsLoader
+                loader: listarCuponsLoader,
               },
               {
                 path: "/cadastro/cupons/novo",
                 element: <CadastroCupom />,
               },
               {
-                path: '/cadastro/cupons/:id',
+                path: "/cadastro/cupons/:id",
                 element: <AtualizarCupom />,
                 loader: atualizarCupomLoader,
               },
