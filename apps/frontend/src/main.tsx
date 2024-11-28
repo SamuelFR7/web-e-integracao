@@ -16,9 +16,18 @@ import {
   loader as cadastroProdutoLoader,
 } from "./pages/cadastro-produto"
 import { CadastroCupom } from "./pages/cadastro-cupom"
-import { ListarPedidos, ListarPedidosResponse } from "./pages/listar-pedidos"
-import { DetalhesDoPedido } from "./pages/detalhes-do-pedido"
-import { RelatorioDePedidos } from "./pages/relatorio-de-pedidos"
+import {
+  ListarPedidos,
+  loader as listarPedidosLoader,
+} from "./pages/listar-pedidos"
+import {
+  DetalhesDoPedido,
+  loader as detalhesDoPedidoLoader,
+} from "./pages/detalhes-do-pedido"
+import {
+  RelatorioDePedidos,
+  loader as relatorioDePedidosLoader,
+} from "./pages/relatorio-de-pedidos"
 import {
   ListarCliente,
   loader as listarClienteLoader,
@@ -51,39 +60,6 @@ import {
   AtualizarCategoria,
   loader as atualizarCategoriaLoader,
 } from "./pages/atualizar-categoria"
-
-export type GetPedidoResponse = {
-  pedido: {
-    id: number
-    cep: string
-    rua: string
-    numero: number
-    complemento: string | null
-    bairro: string
-    status:
-      | "Pendente"
-      | "Recebido"
-      | "Em preparo"
-      | "Entregador a caminho"
-      | "Entregue"
-      | "Cancelado"
-    clienteId: number
-    createdAt: Date
-    observacao: string | null
-    formaDePagamento: "pix" | "credito" | "debito" | "dinheiro"
-    cliente: {
-      nome: string
-      cpf: string
-    }
-    produtosPedidos: {
-      id: string
-      produto: {
-        nome: string
-        preco: number
-      }
-    }[]
-  }
-}
 
 const router = createBrowserRouter([
   {
@@ -184,33 +160,17 @@ const router = createBrowserRouter([
               {
                 path: "/movimento/pedidos",
                 element: <ListarPedidos />,
+                loader: listarPedidosLoader,
               },
               {
                 path: "/movimento/pedidos/:id",
                 element: <DetalhesDoPedido />,
-                loader: async ({ params }) => {
-                  const id = params.id
-
-                  if (!id) {
-                    return redirect("/")
-                  }
-
-                  const { data } = await api.get<GetPedidoResponse>(
-                    `/pedidos/${id}`
-                  )
-
-                  return data
-                },
+                loader: detalhesDoPedidoLoader,
               },
               {
                 path: "/relatorio",
                 element: <RelatorioDePedidos />,
-                loader: async () => {
-                  const { data } =
-                    await api.get<ListarPedidosResponse>("/pedidos")
-
-                  return data
-                },
+                loader: relatorioDePedidosLoader,
               },
             ],
           },

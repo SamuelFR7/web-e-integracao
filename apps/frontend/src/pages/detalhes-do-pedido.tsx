@@ -1,27 +1,28 @@
 import { cpf } from "br-docs-validator"
-import { ArrowLeft, X } from "lucide-react"
 import { ReactNode } from "react"
-import { Link, useLoaderData } from "react-router"
+import { LoaderFunctionArgs, useLoaderData } from "react-router"
 import { DetalhePedido } from "~/components/pedido-status"
-import { GetPedidoResponse } from "~/main"
+import { invariantResponse } from "~/lib/utils"
+import { mostrarPedido } from "~/utils/http/pedidos/mostrar-pedido"
+import dayjs from "dayjs"
+import { ModalHeader } from "~/components/modal-header"
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const id = params.id
+
+  invariantResponse(id, "Id is missing")
+
+  const pedido = await mostrarPedido(Number(id))
+
+  return pedido
+}
 
 export function DetalhesDoPedido() {
-  const { pedido } = useLoaderData<GetPedidoResponse>()
+  const pedido = useLoaderData<typeof loader>()
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <div className="flex items-center justify-between">
-        <div />
-        <h1 className="font-bold text-2xl self-center">DETALHES DO PEDIDOS</h1>
-        <div className="flex items-center gap-4">
-          <Link to="/movimento/pedidos">
-            <ArrowLeft className="h-8 w-8" />
-          </Link>
-          <Link to="/">
-            <X className="h-8 w-8" />
-          </Link>
-        </div>
-      </div>
+      <ModalHeader title="DETALHES DO PEDIDOS" goBack="/movimento/pedidos" />
       <Card title={`PEDIDO: #${pedido.id}`}>
         <div className="items-center flex justify-between font-bold">
           <span className="font-bold">
@@ -50,7 +51,7 @@ export function DetalhesDoPedido() {
           <span className="font-bold">
             Prazo de entrega:{" "}
             {new Intl.DateTimeFormat("pt-BR", { timeStyle: "short" }).format(
-              new Date(pedido.createdAt)
+              dayjs(new Date(pedido.createdAt)).add(30, "minutes").toDate()
             )}
           </span>
         </div>
@@ -69,14 +70,18 @@ export function DetalhesDoPedido() {
             {pedido.produtosPedidos.map((produtosPedidos) => (
               <tr key={produtosPedidos.id} className="font-bold">
                 <td className="px-4">1</td>
-                <td className="px-4 text-left">{produtosPedidos.produto.nome}</td>
+                <td className="px-4 text-left">
+                  {produtosPedidos.produto.nome}
+                </td>
                 <td className="px-4 text-left">
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   }).format(produtosPedidos.produto.preco / 100)}
                 </td>
-                <td className="px-4">{pedido.formaDePagamento.toUpperCase()}</td>
+                <td className="px-4">
+                  {pedido.formaDePagamento.toUpperCase()}
+                </td>
               </tr>
             ))}
           </tbody>
