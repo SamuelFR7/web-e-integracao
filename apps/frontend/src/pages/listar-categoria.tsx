@@ -12,23 +12,23 @@ import {
   TableRow,
 } from "~/components/ui/table"
 import { cn } from "~/lib/utils"
-import { deletarCliente } from "~/utils/http/clientes/deletar-cliente"
-import { listarClientes } from "~/utils/http/clientes/listar-clientes"
+import { deletarCategoria } from "~/utils/http/categorias/deletar-categoria"
+import { listarCategorias } from "~/utils/http/categorias/listar-categorias"
 
 export async function loader() {
-  const clientes = await listarClientes()
+  const categorias = await listarCategorias()
 
-  return clientes
+  return categorias
 }
 
-export function ListarCliente() {
+export function ListarCategoriasPage() {
   const navigate = useNavigate()
   const data = useLoaderData<typeof loader>()
 
   const mutation = useMutation({
-    mutationFn: async (id: number) => await deletarCliente(id),
+    mutationFn: async (id: number) => await deletarCategoria(id),
     onSuccess() {
-      navigate("/cadastro/clientes/")
+      navigate("/cadastro/categorias/")
     },
   })
 
@@ -38,10 +38,10 @@ export function ListarCliente() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <ModalHeader title="LISTAR CLIENTES" />
+      <ModalHeader title="LISTAR CATEGORIAS" />
       <div>
         <Link
-          to="/cadastro/clientes/novo"
+          to="/cadastro/categorias/novo"
           className={cn(buttonVariants(), "w-28")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -53,26 +53,24 @@ export function ListarCliente() {
           <TableHeader>
             <TableRow className="font-medium">
               <TableHead>NOME</TableHead>
-              <TableHead>CPF</TableHead>
               <TableHead>AÇÕES</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((cliente) => (
-              <TableRow key={cliente.id} className="font-bold">
-                <TableCell>{cliente.nome}</TableCell>
-                <TableCell>{cliente.cpf}</TableCell>
+            {data.map((categoria) => (
+              <TableRow key={categoria.id} className="font-bold">
+                <TableCell>{categoria.nome}</TableCell>
                 <TableCell className="flex items-center gap-4">
                   <Link
                     className={cn(buttonVariants({ size: "icon" }))}
-                    to={`/cadastro/clientes/${cliente.id}`}
+                    to={`/cadastro/categorias/${categoria.id}`}
                   >
                     <Pencil className="h-4 w-4" />
                   </Link>
                   <Button
                     variant="fail"
                     size="icon"
-                    onClick={() => handleDelete(cliente.id)}
+                    onClick={() => handleDelete(categoria.id)}
                   >
                     <Trash className="h-4 w-4" />
                   </Button>

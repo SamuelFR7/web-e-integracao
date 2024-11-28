@@ -11,24 +11,24 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table"
-import { cn } from "~/lib/utils"
-import { deletarCliente } from "~/utils/http/clientes/deletar-cliente"
-import { listarClientes } from "~/utils/http/clientes/listar-clientes"
+import { cn, formatValue } from "~/lib/utils"
+import { deletarProduto } from "~/utils/http/produtos/deletar-produto"
+import { listarProdutos } from "~/utils/http/produtos/listar-produtos"
 
 export async function loader() {
-  const clientes = await listarClientes()
+  const produtos = await listarProdutos()
 
-  return clientes
+  return produtos 
 }
 
-export function ListarCliente() {
+export function ListarProdutosPage() {
   const navigate = useNavigate()
   const data = useLoaderData<typeof loader>()
 
   const mutation = useMutation({
-    mutationFn: async (id: number) => await deletarCliente(id),
+    mutationFn: async (id: number) => await deletarProduto(id),
     onSuccess() {
-      navigate("/cadastro/clientes/")
+      navigate("/cadastro/produtos/")
     },
   })
 
@@ -38,10 +38,10 @@ export function ListarCliente() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <ModalHeader title="LISTAR CLIENTES" />
+      <ModalHeader title="LISTAR PRODUTOS" />
       <div>
         <Link
-          to="/cadastro/clientes/novo"
+          to="/cadastro/produtos/novo"
           className={cn(buttonVariants(), "w-28")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -53,26 +53,26 @@ export function ListarCliente() {
           <TableHeader>
             <TableRow className="font-medium">
               <TableHead>NOME</TableHead>
-              <TableHead>CPF</TableHead>
+              <TableHead>PREÇO</TableHead>
               <TableHead>AÇÕES</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((cliente) => (
-              <TableRow key={cliente.id} className="font-bold">
-                <TableCell>{cliente.nome}</TableCell>
-                <TableCell>{cliente.cpf}</TableCell>
+            {data.map((produto) => (
+              <TableRow key={produto.id} className="font-bold">
+                <TableCell>{produto.nome}</TableCell>
+                <TableCell>{formatValue(produto.preco)}</TableCell>
                 <TableCell className="flex items-center gap-4">
                   <Link
                     className={cn(buttonVariants({ size: "icon" }))}
-                    to={`/cadastro/clientes/${cliente.id}`}
+                    to={`/cadastro/produtos/${produto.id}`}
                   >
                     <Pencil className="h-4 w-4" />
                   </Link>
                   <Button
                     variant="fail"
                     size="icon"
-                    onClick={() => handleDelete(cliente.id)}
+                    onClick={() => handleDelete(produto.id)}
                   >
                     <Trash className="h-4 w-4" />
                   </Button>

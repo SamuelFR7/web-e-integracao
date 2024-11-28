@@ -5,8 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "~/components/ui/button"
 import { Save } from "lucide-react"
 import { useMutation } from "@tanstack/react-query"
-import { useNavigate } from "react-router"
-import { criarCupom } from "~/utils/http/cupons/criar-cupom"
+import { LoaderFunctionArgs, useLoaderData, useNavigate } from "react-router"
 import { ModalHeader } from "~/components/modal-header"
 import {
   Form,
@@ -16,62 +15,62 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form"
+import { invariantResponse } from "~/lib/utils"
+import { mostrarCategoria } from "~/utils/http/categorias/mostrar-categoria"
+import { atualizarCategoria } from "~/utils/http/categorias/atualizar-categoria"
 
 const formSchema = z.object({
-  codigo: z.string().max(10, "No máximo dez caracteres").toUpperCase(),
-  valor: z.coerce.number().transform((v) => v * 100),
+  nome: z.string().toUpperCase().optional(),
 })
 
 type Input = z.infer<typeof formSchema>
 
-export function CadastroCupom() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  const id = params.id
+
+  invariantResponse(id, "Id is missing")
+
+  const categoria = await mostrarCategoria(Number(id))
+
+  return categoria
+}
+
+export function AtualizarCategoria() {
+  const data = useLoaderData<typeof loader>()
   const navigate = useNavigate()
   const form = useForm<Input>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      codigo: "",
-      valor: 0,
+      nome: data.nome,
     },
   })
 
   const mutation = useMutation({
-    mutationFn: async (data: Input) => await criarCupom(data),
+    mutationFn: async (values: Input) =>
+      await atualizarCategoria(data.id, values),
     onSuccess() {
       form.reset()
-      navigate("/cadastro/cupons")
+      navigate("/cadastro/categorias")
     },
   })
 
-  function onSubmit(data: Input) {
-    mutation.mutate(data)
+  function onSubmit(values: Input) {
+    mutation.mutate(values)
   }
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <ModalHeader title="CADASTRO CUPONS" goBack="/cadastro/cupons" />
+      <ModalHeader title="ATUALIZAR CATEGORIA" goBack="/cadastro/categorias" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <FormField
             control={form.control}
-            name="codigo"
+            name="nome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>CODIGO</FormLabel>
+                <FormLabel>NOME</FormLabel>
                 <FormControl>
                   <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="valor"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>VALOR</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

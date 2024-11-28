@@ -5,8 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "~/components/ui/button"
 import { Save } from "lucide-react"
 import { useMutation } from "@tanstack/react-query"
-import { useNavigate } from "react-router"
-import { criarCupom } from "~/utils/http/cupons/criar-cupom"
+import { LoaderFunctionArgs, useLoaderData, useNavigate } from "react-router"
 import { ModalHeader } from "~/components/modal-header"
 import {
   Form,
@@ -16,39 +15,53 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form"
+import { invariantResponse } from "~/lib/utils"
+import { mostrarCupom } from "~/utils/http/cupons/mostrar-cupom"
+import { atualizarCupom } from "~/utils/http/cupons/atualizar-cupom"
 
 const formSchema = z.object({
-  codigo: z.string().max(10, "No máximo dez caracteres").toUpperCase(),
-  valor: z.coerce.number().transform((v) => v * 100),
+  codigo: z.string().max(10, "No máximo dez caracteres").toUpperCase().optional(),
+  valor: z.coerce.number().transform((v) => v * 100).optional(),
 })
 
 type Input = z.infer<typeof formSchema>
 
-export function CadastroCupom() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  const id = params.id
+
+  invariantResponse(id, "Id is missing")
+
+  const cupom = await mostrarCupom(Number(id))
+
+  return cupom
+}
+
+export function AtualizarCupom() {
+  const data = useLoaderData<typeof loader>()
   const navigate = useNavigate()
   const form = useForm<Input>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      codigo: "",
-      valor: 0,
+      codigo: data.codigo,
+      valor: data.valor / 100,
     },
   })
 
   const mutation = useMutation({
-    mutationFn: async (data: Input) => await criarCupom(data),
+    mutationFn: async (values: Input) => await atualizarCupom(data.id, values),
     onSuccess() {
       form.reset()
       navigate("/cadastro/cupons")
     },
   })
 
-  function onSubmit(data: Input) {
-    mutation.mutate(data)
+  function onSubmit(values: Input) {
+    mutation.mutate(values)
   }
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <ModalHeader title="CADASTRO CUPONS" goBack="/cadastro/cupons" />
+      <ModalHeader title="ATUALIZAR CUPOM" goBack="/cadastro/cupons" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <FormField

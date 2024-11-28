@@ -78,7 +78,7 @@ async function criarPedido(req: Request, res: Response) {
   const data = createPedidoSchema.parse(req.body)
 
   await db.transaction(async (tx) => {
-    const [pedido] = await db
+    const [pedido] = await tx
       .insert(pedidos)
       .values(data)
       .returning({ id: pedidos.id })
@@ -87,7 +87,7 @@ async function criarPedido(req: Request, res: Response) {
       return tx.rollback()
     }
 
-    await db.insert(produtosPedidos).values(
+    await tx.insert(produtosPedidos).values(
       data.produtos.map((produto) => {
         return {
           pedidoId: pedido.id,
