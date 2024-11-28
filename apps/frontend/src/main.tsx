@@ -32,6 +32,8 @@ import {
   loader as listarProdutosLoader,
 } from "./pages/listar-produtos"
 import { AtualizarProduto, loader as atualizarProdutoLoader } from "./pages/atualizar-produto"
+import { ListarCuponsPage, loader as listarCuponsLoader  } from './pages/listar-cupons'
+import { AtualizarCupom, loader as atualizarCupomLoader } from "./pages/atualizar-cupom"
 
 export type GetPedidoResponse = {
   pedido: {
@@ -139,8 +141,18 @@ const router = createBrowserRouter([
                 loader: atualizarProdutoLoader
               },
               {
-                path: "/cadastro/cupons",
+                path: '/cadastro/cupons',
+                element: <ListarCuponsPage />,
+                loader: listarCuponsLoader
+              },
+              {
+                path: "/cadastro/cupons/novo",
                 element: <CadastroCupom />,
+              },
+              {
+                path: '/cadastro/cupons/:id',
+                element: <AtualizarCupom />,
+                loader: atualizarCupomLoader,
               },
               {
                 path: "/movimento/pedidos",
