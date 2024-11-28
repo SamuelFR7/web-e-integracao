@@ -62,6 +62,7 @@ async function mostrarProduto(req: Request, res: Response) {
 
   if (!produto) {
     res.status(404).json({ message: "Produto não encontrado" })
+    return
   }
 
   res.status(200).json(produto)

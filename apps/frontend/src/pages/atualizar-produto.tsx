@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "~/components/ui/button"
 import { Save } from "lucide-react"
 import { useMutation } from "@tanstack/react-query"
-import { useLoaderData, useNavigate } from "react-router"
+import { LoaderFunctionArgs, useLoaderData, useNavigate } from "react-router"
 import { listarCategorias } from "~/utils/http/categorias/listar-categorias"
 import {
   Form,
@@ -22,42 +22,49 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form"
-import { criarProduto } from "~/utils/http/produtos/criar-produto"
+import { atualizarProduto } from "~/utils/http/produtos/atualizar-produto"
+import { mostrarProduto } from "~/utils/http/produtos/mostrar-produto"
+import { invariantResponse } from "~/lib/utils"
 
 const formSchema = z.object({
-  nome: z.string(),
-  tamanho: z.enum(["P", "M", "G"]),
-  categoriaId: z.coerce.number(),
-  preco: z.coerce.number().transform((v) => v * 100),
-  imagem: z
-    .any()
-    .refine((file) => file instanceof FileList, "Imagem é obrigatória"),
+  nome: z.string().optional(),
+  tamanho: z.enum(["P", "M", "G"]).optional(),
+  categoriaId: z.coerce.number().optional(),
+  preco: z.coerce
+    .number()
+    .transform((v) => v * 100)
+    .optional(),
 })
 
 type Input = z.infer<typeof formSchema>
 
-export async function loader() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  const id = params.id
+
+  invariantResponse(id, "Id is missing")
+
+  const produto = await mostrarProduto(Number(id))
   const categorias = await listarCategorias()
 
-  return categorias
+  return { produto, categorias }
 }
 
-export function CadastroProduto() {
-  const categorias = useLoaderData<typeof loader>()
+export function AtualizarProduto() {
+  const { categorias, produto } = useLoaderData<typeof loader>()
 
   const navigate = useNavigate()
   const form = useForm<Input>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: "",
-      preco: 0,
-      tamanho: "P",
-      categoriaId: 1,
+      nome: produto.nome,
+      preco: produto.preco / 100,
+      tamanho: produto.tamanho,
+      categoriaId: produto.categoriaId,
     },
   })
 
   const mutation = useMutation({
-    mutationFn: async (data: Input) => criarProduto(data),
+    mutationFn: async (data: Input) => atualizarProduto(produto.id, data),
     onSuccess() {
       form.reset()
       navigate("/cadastro/produtos")
@@ -70,43 +77,23 @@ export function CadastroProduto() {
 
   return (
     <div className="flex flex-col space-y-4 p-4">
-      <h1 className="font-bold text-2xl self-center">CADASTRO PRODUTOS</h1>
+      <h1 className="font-bold text-2xl self-center">ATUALIZAR PRODUTO</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-          <div className="grid grid-cols-3 gap-2">
-            <FormField
-              control={form.control}
-              name="nome"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>NOME</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="imagem"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Imagem</FormLabel>
-                  <FormControl>
-                    <Input
-                      ref={field.ref}
-                      name={field.name}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => field.onChange(e.target.files)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="nome"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>NOME</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="grid grid-cols-4 gap-2">
             <FormField
               control={form.control}

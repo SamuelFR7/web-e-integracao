@@ -1,9 +1,5 @@
 import { createRoot } from "react-dom/client"
-import {
-  createBrowserRouter,
-  redirect,
-  RouterProvider,
-} from "react-router"
+import { createBrowserRouter, redirect, RouterProvider } from "react-router"
 import "./index.css"
 import { IndexPage } from "./pages"
 import { QueryClientProvider } from "@tanstack/react-query"
@@ -15,13 +11,27 @@ import { DashboardLayout } from "./layouts/dashboard-layout"
 import { ModalLayout } from "./layouts/modal-layout"
 import { CadastroCliente } from "./pages/cadastro-cliente"
 import { CadastroCategoria } from "./pages/cadastro-categoria"
-import { CadastroProduto } from "./pages/cadastro-produto"
+import {
+  CadastroProduto,
+  loader as cadastroProdutoLoader,
+} from "./pages/cadastro-produto"
 import { CadastroCupom } from "./pages/cadastro-cupom"
 import { ListarPedidos, ListarPedidosResponse } from "./pages/listar-pedidos"
 import { DetalhesDoPedido } from "./pages/detalhes-do-pedido"
 import { RelatorioDePedidos } from "./pages/relatorio-de-pedidos"
-import { ListarCliente, loader as listarClienteLoader } from "./pages/listar-cliente"
-import { AtualizarCliente } from "./pages/atualizar-cliente"
+import {
+  ListarCliente,
+  loader as listarClienteLoader,
+} from "./pages/listar-cliente"
+import {
+  AtualizarCliente,
+  loader as atualizarClienteLoader,
+} from "./pages/atualizar-cliente"
+import {
+  ListarProdutosPage,
+  loader as listarProdutosLoader,
+} from "./pages/listar-produtos"
+import { AtualizarProduto, loader as atualizarProdutoLoader } from "./pages/atualizar-produto"
 
 export type GetPedidoResponse = {
   pedido: {
@@ -107,11 +117,7 @@ const router = createBrowserRouter([
               {
                 path: "/cadastro/clientes/:id",
                 element: <AtualizarCliente />,
-                loader: async ({ params }) => {
-                  const { data } = await api.get(`/clientes/${params.id}`)
-
-                  return data
-                },
+                loader: atualizarClienteLoader,
               },
               {
                 path: "/cadastro/categorias",
@@ -119,14 +125,18 @@ const router = createBrowserRouter([
               },
               {
                 path: "/cadastro/produtos",
+                element: <ListarProdutosPage />,
+                loader: listarProdutosLoader,
+              },
+              {
+                path: "/cadastro/produtos/novo",
                 element: <CadastroProduto />,
-                loader: async () => {
-                  const { data } = await api.get<{
-                    categorias: { codigo: number; nome: string; id: number }[]
-                  }>("/categorias")
-
-                  return data
-                },
+                loader: cadastroProdutoLoader,
+              },
+              {
+                path: '/cadastro/produtos/:id',
+                element: <AtualizarProduto />,
+                loader: atualizarProdutoLoader
               },
               {
                 path: "/cadastro/cupons",
