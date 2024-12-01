@@ -28,7 +28,7 @@ const formSchema = z.object({
     .optional(),
   cep: z.string().optional(),
   rua: z.string().optional(),
-  numero: z.number().positive().optional(),
+  numero: z.coerce.number().positive().optional(),
   complemento: z.string().optional(),
   bairro: z.string().optional(),
 })

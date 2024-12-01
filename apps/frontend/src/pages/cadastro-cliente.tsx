@@ -23,7 +23,7 @@ const formSchema = z.object({
   cpf: z.string().refine((v) => cpf.isValid(v), "CPF inválido"),
   cep: z.string(),
   rua: z.string(),
-  numero: z.number().positive(),
+  numero: z.coerce.number().positive(),
   complemento: z.string().optional(),
   bairro: z.string(),
 })
