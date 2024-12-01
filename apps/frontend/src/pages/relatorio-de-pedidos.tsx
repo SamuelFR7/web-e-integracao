@@ -51,7 +51,7 @@ export function RelatorioDePedidos() {
           <Button
             variant="success"
             onClick={() =>
-              window.open("http://localhost:3000/relatorio/pedidos")
+              window.open("http://localhost:3000/relatorios/pedidos/xlsx")
             }
           >
             Exportar
